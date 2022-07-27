@@ -4,8 +4,9 @@
       <h3>Enter Message To Sign:</h3>
       <input type="text" v-model="msg">
       <button @click="submitMessage">Submit</button>
-      <h5 v-if="msgSubmitted">Message is submitted, waiting for a response...</h5>
-      <h5 v-if="signedMsg !== ''">Signed Message: {{ signedMsg }}</h5>
+      <h5 v-if="state=='submitted'">Message is submitted, waiting for a response...</h5>
+      <h5 v-if="state=='received'" style="overflow-wrap:break-word">Signed Message: {{ signedMsg }}</h5>
+      <h5 v-if="state=='received' && validSign">Signed message matches with original message</h5>
     </div>
     <div v-else>
       <h3>You Need To Connect Your Metamask</h3>
@@ -19,8 +20,8 @@ import Web3 from 'web3'
 import contractAbi from './abi/MessageSigner_abi.json'
 
 const ethereum = window.ethereum
-const contractAddress = '0x9c07180E0A073BF01a28992594C1B35259b21047';
-const web3 = new Web3("wss://goerli.infura.io/ws/v3/f27c3d5982f54337a9795d5bc0b8d5d8")
+const contractAddress = '0xA4A0F5b9ab55d4E4392145E60d1681583bd53bf9';
+const web3 = new Web3(ethereum)
 const contractInstance = new web3.eth.Contract(
   contractAbi, 
   contractAddress
@@ -33,13 +34,14 @@ export default {
       msg: '',
       signedMsg: '',
       walletConnected: false,
-      msgSubmitted: false,
+      state: '',
       account: null,
+      validSign: false
     }
   },
   methods: {
     async submitMessage() {
-      const encodedData = await this.getEncodedData()
+      const encodedData = this.getEncodedData()
       const transactionParams = {
         nonce: '0x00', 
         gasPrice: '0x00004e72a000', 
@@ -55,14 +57,23 @@ export default {
         params: [transactionParams]
       })
 
-      this.msgSubmitted = true
+      this.state = 'submitted'
       this.startListeningForSignedMessage()
     },
     startListeningForSignedMessage() {
       const subscription = contractInstance.events.MessageSigned({})
-        .on('data', e => {
+        .on('data', async (e) => {
           this.signedMsg = e.returnValues.message
-          this.msgSubmitted = false
+          const originalMsg = await ethereum.request({
+            method: 'eth_decrypt',
+            params: [this.signedMsg, this.account],
+          });
+          if (originalMsg === this.msg) {
+            this.validSign = true
+          } else {
+            this.validSign = false
+          }
+          this.state = 'received'
           subscription.unsubscribe()
         }
       )

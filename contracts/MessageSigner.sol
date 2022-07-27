@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 contract MessageSigner {
 
-    address constant ORACLE = 0xB9e2A2008d3A58adD8CC1cE9c15BF6D4bB9C6d72;
+    address constant ORACLE = 0x6787162cF7473341fD3c566B7fa9b896a12f46A1;
     uint nextId;
 
     modifier onlyOracle {
@@ -11,9 +11,9 @@ contract MessageSigner {
         _;
     }
 
-    event Message(uint indexed id, string message);
+    event MessageSigned(uint indexed id, string message);
     
-    function submitMessage(string calldata _msg) external {
+    function submitMessage(string calldata _msg) external returns (uint) {
         (bool success, ) = ORACLE.call(
             abi.encodeWithSignature(
                 "submitMessageRequest(uint256,string,address,string)", 
@@ -24,10 +24,12 @@ contract MessageSigner {
             )
         );
         require (success);
+        
         ++nextId;
+        return nextId - 1;
     }
 
     function _callback(uint _id, string calldata _signedMsg) external onlyOracle {
-        emit Message(_id, _signedMsg);
+        emit MessageSigned(_id, _signedMsg);
     }
 }

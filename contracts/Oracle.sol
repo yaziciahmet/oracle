@@ -6,7 +6,7 @@ contract Oracle {
     mapping (address => bool) authenticatedNodes;
     address owner;
 
-    event MessageRequest(uint indexed id, string message, address callbackAddress, string _callbackFunction);
+    event MessageRequest(uint indexed id, string message, address callbackAddress, string callbackFunction);
 
     modifier onlyAuthenticatedNodes {
         require (authenticatedNodes[msg.sender] || msg.sender == owner, "Only authenticated nodes");
@@ -22,13 +22,13 @@ contract Oracle {
         owner = msg.sender;
     }
 
-    function submitMessageRequest(uint _id, string calldata _msg, address _callbackAddress, string memory _callbackFunction) 
-        public 
+    function submitMessageRequest(uint _id, string calldata _msg, address _callbackAddress, string calldata _callbackFunction) 
+        external 
     {
         emit MessageRequest(_id, _msg, _callbackAddress, _callbackFunction);
     }
 
-    function fulfillMessageRequest(uint _id, string calldata _signedMsg, address _callbackAddress, string memory _callbackFunction)
+    function fulfillMessageRequest(uint _id, string calldata _signedMsg, address _callbackAddress, string calldata _callbackFunction)
         external onlyAuthenticatedNodes 
     {
         (bool success, ) = _callbackAddress.call(

@@ -1,0 +1,107 @@
+[
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "message",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "callbackAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "callbackFunction",
+				"type": "string"
+			}
+		],
+		"name": "MessageRequest",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_nodeAddress",
+				"type": "address"
+			}
+		],
+		"name": "authenticateNode",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_signedMsg",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_callbackAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_callbackFunction",
+				"type": "string"
+			}
+		],
+		"name": "fulfillMessageRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_msg",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_callbackAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_callbackFunction",
+				"type": "string"
+			}
+		],
+		"name": "submitMessageRequest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
