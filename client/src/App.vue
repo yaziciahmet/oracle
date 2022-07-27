@@ -68,11 +68,7 @@ export default {
             method: 'eth_decrypt',
             params: [this.signedMsg, this.account],
           });
-          if (originalMsg === this.msg) {
-            this.validSign = true
-          } else {
-            this.validSign = false
-          }
+          this.validSign = originalMsg === this.msg ? true : false
           this.state = 'received'
           subscription.unsubscribe()
         }
